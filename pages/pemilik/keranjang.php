@@ -300,7 +300,7 @@
                   </tbody>
                 </table>
                 <div class="card-footer">
-                  <button type="submit" class="btn btn-primary">Checkout</button>
+                 <a href="checkout.php"> <button type="submit" class="btn btn-primary">Checkout</button> </a> 
                 </div>
               </form>
             </div>

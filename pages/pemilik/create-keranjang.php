@@ -3,15 +3,15 @@
 
     session_start();
 
-    if(isset($_POST['tambah-kendaraan'])){
-        $stnk = $_POST['no_stnk'];
-        $tipekendaraan = $_POST['id_tipe'];
-        $mesin = $_POST['no_mesin'];
-        $rangka = $_POST['no_rangka'];
-        $tahun = $_POST['tahun'];
-        $warna = $_POST['warna'];
+    $id = $_GET['id_sukucadang'];
 
+    if(isset($_SESSION['keranjang'] [$id])){
+
+        $_SESSION['keranjang'] [$id] += 1;
+    }
+    else {
         
+        $_SESSION['keranjang'] [$id] = 1; 
     }
 
     echo "<script>alert('Produk dimasukkan keranjang belanja!')</script>

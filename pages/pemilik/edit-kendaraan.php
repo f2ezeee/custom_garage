@@ -10,28 +10,36 @@ include_once('../../config.php');
    header("location:../../../index.php?pesan=belumSignIn");
  }
 
+ $kueri = "SELECT * FROM user WHERE email_user='". $_SESSION['email'] ."'";
+ $eksekusi = mysqli_query($mysqli, $kueri);
+ $baris = mysqli_fetch_assoc($eksekusi);
+
+ $_SESSION = $baris['nama_user'];
+
 //  // Fetch all users data from database
- $query    =   "SELECT * FROM kendaraan k JOIN pemilik p ON k.id_pemilik = p.id_pemilik
-                JOIN tipe_kendaraan tk ON tk.id_tipe = k.id_tipe";
+ $query    =   "SELECT * FROM kendaraan k JOIN pemilik p WHERE k.id_pemilik = p.id_pemilik";
  $result =    mysqli_query($mysqli, $query);
 
-?>
+ if(isset($_GET['no_stnk'])) {
+$execute3 = "SELECT * FROM kendaraan k JOIN tipe_kendaraan tk ON k.id_tipe = tk.id_tipe WHERE no_stnk='".$_GET['no_stnk']."'" ;
+$execute4 = mysqli_query($mysqli, $execute3);
+}
 
+ 
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AdminLTE 3 | DataTables</title>
+  <title>AdminLTE 3 | General Form Elements</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="../../plugins/fontawesome-free/css/all.min.css">
-  <!-- DataTables -->
-  <link rel="stylesheet" href="../../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-  <link rel="stylesheet" href="../../plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
-  <link rel="stylesheet" href="../../plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
 </head>
@@ -210,7 +218,17 @@ include_once('../../config.php');
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-        <li class="nav-item">
+          <!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>
+                Dashboard
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <li class="nav-item">
               <a href="sukucadang.php" class="nav-link">
                 <i class="nav-icon far fa-circle text-info"></i>
                 <p>Suku Cadang</p>
@@ -234,6 +252,7 @@ include_once('../../config.php');
               <p>Kendaraan</p>
             </a>
           </li> 
+          </li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
@@ -248,12 +267,12 @@ include_once('../../config.php');
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>DataTables</h1>
+            <h1>General Form</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">DataTables</li>
+              <li class="breadcrumb-item active">General Form</li>
             </ol>
           </div>
         </div>
@@ -264,66 +283,89 @@ include_once('../../config.php');
     <section class="content">
       <div class="container-fluid">
         <div class="row">
-          <div class="col-12">
-            <div class="card">
+          <!-- left column --> 
+          <?php 
+          
+          $row = mysqli_fetch_assoc($execute4)
+
+          ?>
+          <div class="col-md-12">
+            <!-- general form elements -->
+            <div class="card card-primary">
               <div class="card-header">
-                <a href="tambah-kendaraan.php" class="btn btn-primary">Tambah</a>
+                <h3 class="card-title">Edit Kendaraan</h3>
               </div>
-               <!-- /.card-header -->
-               <div class="card-body">
-                <table id="example2" class="table table-bordered table-hover">
-                  <thead>
-                  <tr>
-                    <th>NO. STNK</th>
-                    <th>NAMA TIPE</th>
-                    <th>NAMA PEMILIK</th>
-                    <th>NO MESIN</th>
-                    <th>NO RANGKA</th>
-                    <th>TAHUN</th>
-                    <th>WARNA</th>
-                    <th>AKSI</th>
-                  </tr>
+              <!-- /.card-header -->
+              <!-- form start -->
+              <form method="POST" action="">
+                <div class="card-body">
+                  <!-- <div class="form-group">
+                    <label for="exampleInputEmail1">No. STNK</label>
+                    <input type="text" class="form-control" id="exampleInputEmail1" name="no_stnk" >
+                  </div> -->
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Tipe Kendaraan</label>
+                    <select class="form-control" name="id_tipe" required>
+                        <option value="" disabled selected hidden>Tipe Kendaraan</option>
+                        <?php
+                          $result = "SELECT * FROM tipe_kendaraan ";
+                          $tipe = mysqli_query($mysqli, $result);
 
-                  </thead>
+                          foreach ($tipe as $tk) :
+                        ?>
+                        <option value="<?php echo $tk['id_tipe']; ?>"><?php echo $tk['nama_tipe']; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputPassword1">No. Mesin</label>
+                    <input type="text" class="form-control" id="exampleInputPassword1" maxlength="14" name="no_mesin" value="<?php echo $row ['no_mesin'];?>">
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputPassword1">No. Rangka</label>
+                    <input type="text" class="form-control" id="exampleInputPassword1" maxlength="18" name="no_rangka" value="<?php echo $row ['no_rangka'];?>">
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputPassword1">Warna</label>
+                    <input type="text" class="form-control" id="exampleInputPassword1" name="warna" value="<?php echo $row ['warna'];?>">
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputPassword1">Tahun</label>
+                    <input type="number" class="form-control" id="exampleInputPassword1" name="tahun" value="<?php echo $row ['tahun'];?>">
+                  </div>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                  <button type="submit" name="edit-kendaraan" class="btn btn-primary">Tambah</button>
+                </div>
+              </form>
+              <?php
+                if(isset($_POST['edit-kendaraan'])){
+                    $tipekendaraan = $_POST['id_tipe'];
+                    $mesin = $_POST['no_mesin'];
+                    $rangka = $_POST['no_rangka'];
+                    $tahun = $_POST['tahun'];
+                    $warna = $_POST['warna'];
 
-                  <tbody>
+                    $execute5 = "UPDATE kendaraan SET id_tipe = '$tipekendaraan', no_mesin = '$mesin', no_rangka = '$rangka', tahun = '$tahun', warna = '$warna' WHERE no_stnk='".$_GET['no_stnk']."'";
 
-                    <?php
-                    foreach($result as $data_tipekendaraan):
-                    ?>
+                    $execute6 = mysqli_query($mysqli, $execute5);
 
-                  <tr>
-                    <td> <?php echo $data_tipekendaraan['no_stnk']; ?> </td>
-                    <td> <?php echo $data_tipekendaraan['nama_tipe']; ?> </td>
-                    <td> <?php echo $data_tipekendaraan['nama_pemilik']; ?> </td>
-                    <td> <?php echo $data_tipekendaraan['no_mesin']; ?> </td>
-                    <td> <?php echo $data_tipekendaraan['no_rangka']; ?> </td>
-                    <td> <?php echo $data_tipekendaraan['tahun']; ?> </td>
-                    <td> <?php echo $data_tipekendaraan['warna']; ?> </td>
-                    <td>
-                      <a class="btn btn-link text-danger text-gradient px-3 mb-0" href="delete-kendaraan.php?no_stnk=<?php echo $data_tipekendaraan["no_stnk"]; ?>">Delete</a>
-                      <a class="btn btn-link text-warning px-3 mb-0" href="edit-kendaraan.php?no_stnk=<?php echo $data_tipekendaraan["no_stnk"]; ?>">Edit</a>
-                    </td>
-                  </tr>
-
-                  <?php 
-                  endforeach; 
-                  ?>
-
-
-                  </tbody>
-                  
-                </table>
-              </div>
-              <!-- /.card-body -->
+                    echo "<script>alert('Data Kendaraan Sudah Terupdate')</script>
+                    <script>location='kendaraan.php'</script>";
+                }
+                
+            ?>
             </div>
             <!-- /.card -->
+
           </div>
-          <!-- /.col -->
+          <!--/.col (left) -->
+          <!-- right column -->
+          <!--/.col (right) -->
         </div>
         <!-- /.row -->
-      </div>
-      <!-- /.container-fluid -->
+      </div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->
   </div>
@@ -347,40 +389,17 @@ include_once('../../config.php');
 <script src="../../plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
 <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- DataTables  & Plugins -->
-<script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="../../plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-<script src="../../plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-<script src="../../plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-<script src="../../plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-<script src="../../plugins/jszip/jszip.min.js"></script>
-<script src="../../plugins/pdfmake/pdfmake.min.js"></script>
-<script src="../../plugins/pdfmake/vfs_fonts.js"></script>
-<script src="../../plugins/datatables-buttons/js/buttons.html5.min.js"></script>
-<script src="../../plugins/datatables-buttons/js/buttons.print.min.js"></script>
-<script src="../../plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<!-- bs-custom-file-input -->
+<script src="../../plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
 <!-- AdminLTE App -->
 <script src="../../dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="../../dist/js/demo.js"></script>
 <!-- Page specific script -->
 <script>
-  $(function () {
-    $("#example1").DataTable({
-      "responsive": true, "lengthChange": false, "autoWidth": false,
-      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-    $('#example2').DataTable({
-      "paging": true,
-      "lengthChange": false,
-      "searching": false,
-      "ordering": true,
-      "info": true,
-      "autoWidth": false,
-      "responsive": true,
-    });
-  });
+$(function () {
+  bsCustomFileInput.init();
+});
 </script>
 </body>
 </html>

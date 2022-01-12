@@ -54,8 +54,8 @@ if(isset($_POST['register'])) {
 
         $query         =    "INSERT INTO user (nama_user, email_user, password_user, role_user, alamat_user, telp_user)
                                 VALUES ('$nama', '$email', '$password', '$role', '$alamat', '$notelp');
-                                INSERT INTO pemilik (id_pemilik, nama_pemilik, alamat_pemilik, telp_pemilik)
-                                SELECT id_user, nama_user, alamat_user, telp_user FROM user
+                                INSERT INTO pemilik (nama_pemilik, alamat_pemilik, telp_pemilik, id_user)
+                                SELECT nama_user, alamat_user, telp_user, id_user FROM user
                                 ORDER BY id_user DESC LIMIT 1";
             $signup        = $mysqli->multi_query($query);
 

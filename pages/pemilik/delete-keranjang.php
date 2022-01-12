@@ -5,12 +5,8 @@
 
     $id     = $_GET['id_sukucadang'];
 
-    if(isset($_SESSION['keranjang'][$id])){
-        $_SESSION['keranjang'][$id]=+1;
-    } else{
-        $_SESSION['keranjang'][$id]=1;
-    }
+    unset ($_SESSION['keranjang'][$id]);
 
-    echo "<script>alert('Produk dimasukkan keranjang belanja!')</script>
-    <script>location='sukucadang.php'</script>";
+    echo "<script>alert('Produk berhasil dihapus')</script>
+    <script>location='keranjang.php'</script>";
 ?>
