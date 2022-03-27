@@ -212,17 +212,6 @@ include_once('../../config.php');
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Dashboard
-                <i class="right fas fa-angle-left"></i>
-              </p>
-            </a>
-            </a>
-          </li>
-
-          <li class="nav-item">
             <a href="pegawai.php" class="nav-link">
               <i class="nav-icon far fa-circle text-info"></i>
               <p>Pegawai</p>
@@ -258,6 +247,12 @@ include_once('../../config.php');
             <a href="sukucadang.php" class="nav-link">
               <i class="nav-icon far fa-circle text-info"></i>
               <p>Suku Cadang</p>
+            </a>
+          </li> 
+          <li class="nav-item">
+            <a href="nota.php" class="nav-link">
+              <i class="nav-icon far fa-circle text-info"></i>
+              <p>Nota</p>
             </a>
           </li> 
 

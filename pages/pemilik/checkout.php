@@ -18,8 +18,7 @@ include_once('../../config.php');
  $_SESSION['id_user'] = $baris['id_user'];
 
 //  // Fetch all users data from database
- $query    =   "SELECT * FROM kendaraan k JOIN pemilik p WHERE k.id_pemilik = p.id_pemilik";
- $result =    mysqli_query($mysqli, $query);
+
 
 ?>
 <!DOCTYPE html>
@@ -213,14 +212,6 @@ include_once('../../config.php');
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Dashboard
-                <i class="right fas fa-angle-left"></i>
-              </p>
-            </a>
             <li class="nav-item">
               <a href="sukucadang.php" class="nav-link">
                 <i class="nav-icon far fa-circle text-info"></i>
@@ -234,18 +225,17 @@ include_once('../../config.php');
             </a>
           </li> 
           <li class="nav-item">
-            <a href="tagihan.php" class="nav-link">
-              <i class="nav-icon far fa-circle text-info"></i>
-              <p>Tagihan</p>
-            </a>
-          </li> 
-          <li class="nav-item">
             <a href="kendaraan.php" class="nav-link">
               <i class="nav-icon far fa-circle text-info"></i>
               <p>Kendaraan</p>
             </a>
           </li> 
-          </li>
+          <li class="nav-item">
+            <a href="nota.php" class="nav-link">
+              <i class="nav-icon far fa-circle text-info"></i>
+              <p>Nota</p>
+            </a>
+          </li> 
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
@@ -289,7 +279,7 @@ include_once('../../config.php');
                 <div class="card-body">
                   <div class="form-group">
                     <label for="exampleInputEmail1">Tipe Kendaraan</label>
-                    <select class="form-control" name="id_tipe" required>
+                    <select class="form-control" name="no_stnk" required>
                         <option value="" disabled selected hidden> Pilih STNK</option>
                         <?php
                           $result = "SELECT k.no_stnk FROM kendaraan k JOIN pemilik p ON k.id_pemilik = p.id_pemilik JOIN user u ON u.id_user = p.id_user WHERE u.id_user = '".$_SESSION['id_user']."' ";
@@ -305,38 +295,63 @@ include_once('../../config.php');
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
-                  <button type="submit" name="tambah-kendaraan" class="btn btn-primary">Tambah</button>
+                  <button type="submit" name="checkout" class="btn btn-primary">Checkout</button>
                 </div>
               </form>
               <?php
-                if(isset($_POST['tambah-kendaraan'])){
+                if(isset($_POST['checkout'])){
                     $stnk = $_POST['no_stnk'];
-                    $tipekendaraan = $_POST['id_tipe'];
-                    $mesin = $_POST['no_mesin'];
-                    $rangka = $_POST['no_rangka'];
-                    $tahun = $_POST['tahun'];
-                    $warna = $_POST['warna'];
+                    $idnsc = '1';
 
-                    $id_pemilik = mysqli_query($mysqli, "SELECT id_pemilik FROM pemilik ORDER BY id_pemilik DESC LIMIT 1");
-                    $baris = mysqli_fetch_assoc($id_pemilik);
+                    $kuerrinsc              = mysqli_query($mysqli, "INSERT INTO nota_sukucadang VALUES ('$idnsc', NULL)");
+                    $query4                 = "SELECT no_nota_sukucadang FROM nota_sukucadang  ORDER BY no_nota_sukucadang DESC LIMIT 1";
+                    $execute4               =  mysqli_query($mysqli, $query4);
+                    $row_nsc                =  mysqli_fetch_assoc($execute4);
+                    $latest_id_nsc          =  $row_nsc['no_nota_sukucadang'];
 
-                    $last_idpemilik = $baris['id_pemilik'];
+                   foreach ($_SESSION['keranjang'] as $id => $qty) {
+                      $kueri           = "SELECT * FROM sukucadang
+                                          WHERE id_sukucadang='$id'";
+                      $sukucadang      = mysqli_query($mysqli, $kueri);
+                      $row             = mysqli_fetch_assoc($sukucadang);
 
-                    $cek = mysqli_query($mysqli,"SELECT * FROM kendaraan WHERE no_stnk='$stnk'");
-                    $r = mysqli_num_rows($cek);
+                      $querryEX        = mysqli_query($mysqli, "INSERT INTO detail_nota_sukucadang VALUES ('$latest_id_nsc', '$id', '$qty')");
+                   }
 
-                    if($r>0){
-                      echo "<script>alert('Data Kendaraan Sudah Terdaftar')</script>
-                            <script>location='tambah-kendaraan.php'</script>";
-                    } else{
-                      $query2              =  "INSERT INTO kendaraan VALUES ('$stnk', '$tipekendaraan', '$last_idpemilik', '$mesin', '$rangka', '$tahun', '$warna')";
-                      $execute2            =  mysqli_query($mysqli, $query2);
+                   $querryinspkb = mysqli_query($mysqli, "INSERT INTO pkb (no_stnk, no_nota_sukucadang) VALUES ('$stnk', '$latest_id_nsc')");
 
-                      echo "<script>alert('Data Kendaraan Sudah Terdaftar')</script>
-                            <script>location='kendaraan.php'</script>";
-                    }
+                   $query7                 =  "SELECT id_pkb FROM pkb
+                   ORDER BY id_pkb DESC LIMIT 1";
+                    $execute7               =  mysqli_query($mysqli, $query7);
+                    $row_id_pkb             =  mysqli_fetch_assoc($execute7);
+                    $latest_id_pkb          =  $row_id_pkb['id_pkb']; 
+                    $kueri                  =  mysqli_query($mysqli,
+                    "CREATE OR REPLACE FUNCTION total(id_nsc VARCHAR(7))
+                    RETURNS INT
+                    BEGIN
+                        DECLARE hitung INT;
+                        SELECT SUM(dnsc.`banyak`*sc.`harga_satuan`) INTO hitung
+                        FROM detail_nota_sukucadang dnsc JOIN sukucadang sc ON dnsc.id_sukucadang = sc.id_sukucadang
+                        WHERE dnsc.no_nota_sukucadang = id_nsc;
+                    RETURN hitung;
+                    END;");
+                    $hasil                  =  mysqli_query($mysqli, "SELECT total('$latest_id_nsc') AS 'Total'");
+                    $row_total              =  mysqli_fetch_assoc($hasil);
+                    $total                  =  $row_total['Total'];
+                  $resullt1               =  "INSERT INTO pembayaran (id_pkb, total_harga) VALUES ('$latest_id_pkb', '$total')";
+                    $add_byr                =  mysqli_query($mysqli, $resullt1);
+
+                    unset($_SESSION['keranjang']);
+
+                    if($add_byr){
+                      echo "<script>alert('Checkout Berhasil!. Silakan Melakukan Pembayaran!')</script>
+                      <script>location='nota.php'</script>";
+                  }
                 }
                 
+               
+      
+
             ?>
             </div>
             <!-- /.card -->

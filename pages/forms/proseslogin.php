@@ -23,7 +23,7 @@
         $data   = mysqli_fetch_assoc($signin);
 
         if($data['role_user'] == "admin"){
-            $_SESSION['email']   = $email;
+            $_SESSION['email_user']   = $email;
             $_SESSION['role_user']    = "admin";
             header("location:../admin/profile.php");
         }

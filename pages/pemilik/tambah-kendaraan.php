@@ -10,11 +10,14 @@ include_once('../../config.php');
    header("location:../../../index.php?pesan=belumSignIn");
  }
 
+
  $kueri = "SELECT * FROM user WHERE email_user='". $_SESSION['email'] ."'";
  $eksekusi = mysqli_query($mysqli, $kueri);
  $baris = mysqli_fetch_assoc($eksekusi);
 
- $_SESSION = $baris['nama_user'];
+ $_SESSION['nama_user'] = $baris['nama_user'];
+ $_SESSION['id_user'] = $baris['id_user'];
+
 
 //  // Fetch all users data from database
  $query    =   "SELECT * FROM kendaraan k JOIN pemilik p WHERE k.id_pemilik = p.id_pemilik";
@@ -180,19 +183,19 @@ include_once('../../config.php');
     <!-- Brand Logo -->
     <a href="../../index3.html" class="brand-link">
       <img src="../../dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light">AdminLTE 3</span>
+      <span class="brand-text font-weight-light">Tambah Kendaraan</span>
     </a>
 
     <!-- Sidebar -->
     <div class="sidebar">
       <!-- Sidebar user (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        <div class="image">
+        <!-- <div class="image">
           <img src="../../dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
           <a href="#" class="d-block">Alexander Pierce</a>
-        </div>
+        </div> -->
       </div>
 
       <!-- SidebarSearch Form -->
@@ -214,12 +217,6 @@ include_once('../../config.php');
                with font-awesome or any other icon font library -->
           <li class="nav-item">
             <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Dashboard
-                <i class="right fas fa-angle-left"></i>
-              </p>
-            </a>
             <li class="nav-item">
               <a href="sukucadang.php" class="nav-link">
                 <i class="nav-icon far fa-circle text-info"></i>
@@ -233,17 +230,17 @@ include_once('../../config.php');
             </a>
           </li> 
           <li class="nav-item">
-            <a href="tagihan.php" class="nav-link">
-              <i class="nav-icon far fa-circle text-info"></i>
-              <p>Tagihan</p>
-            </a>
-          </li> 
-          <li class="nav-item">
             <a href="kendaraan.php" class="nav-link">
               <i class="nav-icon far fa-circle text-info"></i>
               <p>Kendaraan</p>
             </a>
-          </li> 
+          </li>
+          <li class="nav-item">
+            <a href="nota.php" class="nav-link">
+              <i class="nav-icon far fa-circle text-info"></i>
+              <p>Nota</p>
+            </a>
+          </li>  
           </li>
         </ul>
       </nav>
@@ -335,7 +332,7 @@ include_once('../../config.php');
                     $tahun = $_POST['tahun'];
                     $warna = $_POST['warna'];
 
-                    $id_pemilik = mysqli_query($mysqli, "SELECT id_pemilik FROM pemilik ORDER BY id_pemilik DESC LIMIT 1");
+                    $id_pemilik = mysqli_query($mysqli, "SELECT id_pemilik FROM pemilik p JOIN user u ON p.id_user = u.id_user WHERE u.id_user = '".$_SESSION['id_user']."'");
                     $baris = mysqli_fetch_assoc($id_pemilik);
 
                     $last_idpemilik = $baris['id_pemilik'];

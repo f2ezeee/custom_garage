@@ -14,6 +14,12 @@ if(isset($_POST['register'])) {
 
     $nama = $_POST['nama_user'];
     $role = "pemilik";
+
+    $email = "pemilik";
+    
+    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
     $email = $_POST['email_user'];
     $alamat = $_POST['alamat_user'];
     $notelp = $_POST['telp_user'];
@@ -29,29 +35,7 @@ if(isset($_POST['register'])) {
     }
     
     else{
-
-       
-        // $querry = mysqli_query($mysqli, "INSERT INTO user (nama_user, email_user, password_user, role_user, alamat_user, telp_user )
-        // VALUES ('$nama', '$email', '$password', '$role', '$alamat', '$notelp')");
-
-        // $register = mysqli_query($mysqli, $querry); 
-
-        // $query1                 =  "SELECT * FROM user ORDER BY id_user DESC LIMIT 1";
-        // $execute1               =  mysqli_query($mysqli, $query1);
-        // $row                    =  mysqli_fetch_assoc($execute1);
-        // $latest_id_pemilik      =  $row['id_user'];
-        // $namapemilik            =  $row['nama_user'];
-        // $alamatpemilik          =  $row['email_user'];
-        // $telppemilik            =  $row['telp_user'];
-
-        // $query2                 =  "INSERT INTO pemilik ('id_pemilik', 'nama_pemilik', 'alamat_pemilik', 'telp_pemilik')
-        //                             VALUES('$latest_id_pemilik','$namapemilik','$alamatpemilik','$telppemilik')";
-        // $execute2               =  mysqli_query($mysqli, $query2);
-
-
-
-
-
+        
         $query         =    "INSERT INTO user (nama_user, email_user, password_user, role_user, alamat_user, telp_user)
                                 VALUES ('$nama', '$email', '$password', '$role', '$alamat', '$notelp');
                                 INSERT INTO pemilik (nama_pemilik, alamat_pemilik, telp_pemilik, id_user)

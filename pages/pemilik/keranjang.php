@@ -7,10 +7,20 @@
     header("location:../../../index.php?pesan=belumSignIn");
   }
 
-  // if(empty($_SESSION['keranjang'])){
-  //   echo "<script>alert('Keranjang belanjamu kosong!')</script>
-  //         <script>location='sukucadang.php'</script>";
-  // }
+  if(empty($_SESSION['keranjang'])){
+    echo "<script>alert('Keranjang belanjamu kosong!')</script>
+          <script>location='sukucadang.php'</script>";
+  }
+
+  $query                = "SELECT * FROM user WHERE email_user='". $_SESSION['email']."'";
+  $result               = mysqli_query($mysqli, $query);
+  $counter              = 1;
+
+  $row                  = mysqli_fetch_assoc($result);
+
+  $_SESSION['id_user']  = $row['id_user'];
+
+  
 ?>
 
 <!DOCTYPE html>
@@ -172,7 +182,7 @@
     <!-- Brand Logo -->
     <a href="../../index3.html" class="brand-link">
       <img src="../../dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light">AdminLTE 3</span>
+      <span class="brand-text font-weight-light">Keranjang</span>
     </a>
 
     <!-- Sidebar -->
@@ -217,18 +227,17 @@
             </a>
           </li> 
           <li class="nav-item">
-            <a href="tagihan.php" class="nav-link">
-              <i class="nav-icon far fa-circle text-info"></i>
-              <p>Tagihan</p>
-            </a>
-          </li> 
-          <li class="nav-item">
             <a href="kendaraan.php" class="nav-link">
               <i class="nav-icon far fa-circle text-info"></i>
               <p>Kendaraan</p>
             </a>
           </li> 
-          </li>
+          <li class="nav-item">
+            <a href="nota.php" class="nav-link">
+              <i class="nav-icon far fa-circle text-info"></i>
+              <p>Nota</p>
+            </a>
+          </li> 
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

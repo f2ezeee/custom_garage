@@ -11,9 +11,22 @@ include_once('../../config.php');
  }
 
 //  // Fetch all users data from database
- $query    =   "SELECT * FROM kendaraan k JOIN pemilik p ON k.id_pemilik = p.id_pemilik
-                JOIN tipe_kendaraan tk ON tk.id_tipe = k.id_tipe";
- $result =    mysqli_query($mysqli, $query);
+//  $query    =   "SELECT * FROM kendaraan k JOIN pemilik p ON k.id_pemilik = p.id_pemilik
+//                 JOIN tipe_kendaraan tk ON tk.id_tipe = k.id_tipe WHERE id_user = '".$_SESSION['id_user']."'";
+//  $result =    mysqli_query($mysqli, $query);
+$query                =   "SELECT * FROM user WHERE email_user='". $_SESSION['email']."'";
+  $result               = mysqli_query($mysqli, $query);
+  $counter              = 1;
+
+  $row                  = mysqli_fetch_assoc($result);
+
+  $_SESSION['id_user']  = $row['id_user'];
+
+$kendaraan             = "SELECT * FROM user u JOIN pemilik p ON p.id_user = u.id_user
+                          JOIN kendaraan k ON k.id_pemilik = p.id_pemilik
+                          JOIN tipe_kendaraan tk ON tk.id_tipe = k.id_tipe
+                          WHERE u.id_user =". $_SESSION['id_user']."";
+$pemiliks               = mysqli_query($mysqli, $kendaraan);
 
 ?>
 
@@ -180,19 +193,19 @@ include_once('../../config.php');
     <!-- Brand Logo -->
     <a href="../../index3.html" class="brand-link">
       <img src="../../dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light">AdminLTE 3</span>
+      <span class="brand-text font-weight-light">Tambah Kendaraan</span>
     </a>
 
     <!-- Sidebar -->
     <div class="sidebar">
       <!-- Sidebar user (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        <div class="image">
+        <!-- <div class="image">
           <img src="../../dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
           <a href="#" class="d-block">Alexander Pierce</a>
-        </div>
+        </div> -->
       </div>
 
       <!-- SidebarSearch Form -->
@@ -232,6 +245,12 @@ include_once('../../config.php');
             <a href="kendaraan.php" class="nav-link">
               <i class="nav-icon far fa-circle text-info"></i>
               <p>Kendaraan</p>
+            </a>
+          </li> 
+          <li class="nav-item">
+            <a href="nota.php" class="nav-link">
+              <i class="nav-icon far fa-circle text-info"></i>
+              <p>Nota</p>
             </a>
           </li> 
         </ul>
@@ -289,7 +308,7 @@ include_once('../../config.php');
                   <tbody>
 
                     <?php
-                    foreach($result as $data_tipekendaraan):
+                    foreach($pemiliks as $data_tipekendaraan):
                     ?>
 
                   <tr>
